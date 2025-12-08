@@ -1,4 +1,4 @@
-﻿namespace Backend.Model
+﻿namespace Backend.Models
 {
     public class DetalleFactura
     {
@@ -15,4 +15,4 @@
         public Producto? Producto { get; set; }
     }
 }
-}
+

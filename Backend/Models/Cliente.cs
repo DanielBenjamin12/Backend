@@ -1,4 +1,4 @@
-﻿namespace Backend.Model
+﻿namespace Backend.Models
 {
     public class Cliente
     {
