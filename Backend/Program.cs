@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend
 {
@@ -8,8 +9,14 @@ namespace Backend
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Crear variable de cadena de conexión
+            var connectionString = builder.Configuration.GetConnectionString("Connection");
+            // Configurar el contexto de la base de datos
+            builder.Services.AddDbContext<Contex.AppDBContex>(options =>
+                options.UseSqlServer(connectionString)
+            );
 
+            // Add services to the container.
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
@@ -20,7 +27,13 @@ namespace Backend
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
-                app.MapScalarApiReference();
+                app.MapScalarApiReference(options =>
+                {
+                    options.Title = "Backend API";
+                    options.Theme = ScalarTheme.BluePlanet;
+                    options.DefaultHttpClient = new(ScalarTarget.JavaScript, ScalarClient.Fetch);
+
+                });
             }
 
             app.UseHttpsRedirection();
