@@ -90,3 +90,5 @@ La API se ejecutará y escuchará en los puertos definidos en `Backend/Propertie
 Una vez que la aplicación se esté ejecutando en el entorno de desarrollo, puedes acceder a la interfaz de Scalar para ver y probar los endpoints de la API. Abre tu navegador y ve a la URL base de tu aplicación (por ejemplo, `http://localhost:5000`).
 
 ```
+http://localhost:5000/scalar
+```
