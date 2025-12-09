@@ -9,7 +9,7 @@ namespace Backend
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Crear variable de cadena de conexión
+            // Crear variable de cadena de conexiï¿½n
             var connectionString = builder.Configuration.GetConnectionString("Connection");
             // Configurar el contexto de la base de datos
             builder.Services.AddDbContext<Contex.AppDBContex>(options =>
@@ -21,8 +21,18 @@ namespace Backend
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
-            var app = builder.Build();
+            // Agregar CORS a la aplicaciom
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithOrigins("http://localhost:4200"); // cambia si tu frontend corre en otro puerto
+                });
+            });
 
+            var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

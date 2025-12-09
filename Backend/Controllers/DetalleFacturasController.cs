@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Contex;
 using Backend.Models;
+using Backend.Dtos;
 
 namespace Backend.Controllers
 {
@@ -23,10 +24,23 @@ namespace Backend.Controllers
 
         // GET: api/DetalleFacturas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DetalleFactura>>> GetDetalleFacturas()
+        public async Task<ActionResult<IEnumerable<DetalleResponseDto>>> GetDetalleFacturas()
         {
-            return await _context.DetalleFacturas.ToListAsync();
+            var detalles = await _context.DetalleFacturas
+                .Include(d => d.Producto)
+                .Select(d => new DetalleResponseDto {
+                    Id = d.Id,
+                    ProductoId = d.ProductoId,
+                    ProductoNombre = d.Producto.Nombre,
+                    Cantidad = d.Cantidad,
+                    PrecioUnitario = d.PrecioUnitario,
+                    Subtotal = d.Subtotal
+                })
+                .ToListAsync();
+
+            return Ok(detalles);
         }
+
 
         // GET: api/DetalleFacturas/5
         [HttpGet("{id}")]
@@ -41,6 +55,25 @@ namespace Backend.Controllers
 
             return detalleFactura;
         }
+
+        // GET: api/DetalleFacturas/by-factura/5
+        [HttpGet("by-factura/{facturaId}")]
+        public async Task<IActionResult> GetPorFactura(int facturaId)
+        {
+            var existe = await _context.Facturas.AnyAsync(f => f.Id == facturaId);
+            if (!existe) return NotFound(new { error = "Factura no encontrada" });
+
+            var detalles = await _context.DetalleFacturas
+                .Where(d => d.FacturaId == facturaId)
+                .Include(d => d.Producto)
+                .Select(d => new {
+                    d.Id, d.ProductoId, ProductoNombre = d.Producto.Nombre, d.Cantidad, d.PrecioUnitario, d.Subtotal
+                })
+                .ToListAsync();
+
+            return Ok(detalles);
+        }
+
 
         // PUT: api/DetalleFacturas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
