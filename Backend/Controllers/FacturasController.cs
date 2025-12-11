@@ -4,10 +4,6 @@ using Backend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -32,16 +28,16 @@ namespace Backend.Controllers
                     .ThenInclude(d => d.Producto)
                 .ToListAsync();
 
-            var resp = facturas.Select(f => new FacturaResponseDto
+            var resp = facturas.Select(factura => new FacturaResponseDto
             {
-                Id = f.Id,
-                ClienteId = f.ClienteId,
-                ClienteNombre = f.Cliente?.Nombre,
-                Fecha = f.Fecha,
-                TotalBruto = f.TotalBruto,
-                Impuestos = f.Impuestos,
-                TotalNeto = f.TotalNeto,
-                Detalles = f.Detalles?.Select(d => new DetalleResponseDto
+                Id = factura.Id,
+                ClienteId = factura.ClienteId,
+                ClienteNombre = factura.Cliente?.Nombre,
+                Fecha = factura.Fecha,
+                TotalBruto = factura.TotalBruto,
+                Impuestos = factura.Impuestos,
+                TotalNeto = factura.TotalNeto,
+                Detalles = factura.Detalles?.Select(d => new DetalleResponseDto
                 {
                     Id = d.Id,
                     ProductoId = d.ProductoId,
@@ -170,7 +166,7 @@ namespace Backend.Controllers
                 });
             }
 
-            const decimal TAX_RATE = 0.13m; // cambia si necesitas otro %
+            const decimal TAX_RATE = 0.18m; // cambia si se necesita otro %
             decimal impuestos = Math.Round(subtotal * TAX_RATE, 2, MidpointRounding.AwayFromZero);
             decimal totalNeto = subtotal + impuestos;
 
